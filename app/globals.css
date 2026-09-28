@@ -126,9 +126,6 @@ main {
 .layout-icon.flow i { inset: -5px 20px -5px -10px; border-radius: 50%; }
 .layout-icon.split i { inset: 0 50% 0 0; }
 .layout-icon.diagonal i { width: 65px; height: 30px; left: -13px; top: -1px; transform: rotate(-34deg); }
-.layout-icon.orbit { background: #181818; }
-.layout-icon.orbit i, .layout-icon.orbit b { width: 31px; height: 31px; border-radius: 50%; top: 6px; left: 3px; }
-.layout-icon.orbit b { left: 18px; background: var(--orange); }
 .color-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 18px 0 26px; }
 .color-row label { display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; gap: 5px 10px; align-items: center; padding: 11px 12px; border: 1px solid var(--line); border-radius: 13px; color: #777; font-size: 9px; text-transform: uppercase; letter-spacing: .06em; }
 .color-row input { grid-row: 1 / 3; width: 38px; height: 38px; padding: 0; border: 0; border-radius: 50%; background: none; overflow: hidden; cursor: pointer; }

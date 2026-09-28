@@ -2,7 +2,7 @@
 
 import { ChangeEvent, DragEvent, useEffect, useRef, useState } from "react";
 
-type LayoutMode = "flow" | "split" | "diagonal" | "orbit";
+type LayoutMode = "flow" | "split" | "diagonal";
 type LogoAsset = { image: HTMLImageElement; name: string; url: string };
 
 const SIZE = 1024;
@@ -11,7 +11,6 @@ const layouts: Array<{ id: LayoutMode; title: string; caption: string }> = [
   { id: "flow", title: "Поток", caption: "Мягкое соединение" },
   { id: "split", title: "Сплит", caption: "Чётко 50 / 50" },
   { id: "diagonal", title: "Диагональ", caption: "Больше динамики" },
-  { id: "orbit", title: "Орбита", caption: "Два круга" },
 ];
 
 function imageFromUrl(url: string) {
@@ -282,25 +281,6 @@ function drawCanvas(
     twoY = 600;
   }
 
-  if (mode === "orbit") {
-    ctx.fillStyle = "#101010";
-    ctx.fillRect(0, 0, SIZE, SIZE);
-    ctx.beginPath();
-    ctx.arc(390, 512, 305, 0, Math.PI * 2);
-    ctx.fillStyle = firstColor;
-    ctx.fill();
-    ctx.beginPath();
-    ctx.arc(650, 512, 305, 0, Math.PI * 2);
-    ctx.fillStyle = secondColor;
-    ctx.fill();
-    ctx.beginPath();
-    ctx.arc(520, 512, 118, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(16,16,16,.96)";
-    ctx.fill();
-    oneX = 320;
-    twoX = 720;
-  }
-
   const box = (scale / 100) * 520;
   drawContained(ctx, logoOne, oneX, oneY, box, "01", card);
   drawContained(ctx, logoTwo, twoX, twoY, box, "02", card);
@@ -376,7 +356,7 @@ export default function Home() {
   const [autoRemove, setAutoRemove] = useState(true);
   const [mode, setMode] = useState<LayoutMode>("flow");
   const firstColor = "#CBF300";
-  const [secondColor, setSecondColor] = useState("#F36A21");
+  const [secondColor, setSecondColor] = useState("#FFFFFF");
   const [scale, setScale] = useState(58);
   const [card, setCard] = useState(false);
   const [border, setBorder] = useState(true);
@@ -450,7 +430,7 @@ export default function Home() {
     setLogoTwoOriginal(null);
     setLogoTwoClean(null);
     setMode("flow");
-    setSecondColor("#F36A21");
+    setSecondColor("#FFFFFF");
     setScale(58);
     setCard(false);
     setBorder(true);
