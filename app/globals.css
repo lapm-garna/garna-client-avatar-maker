@@ -121,7 +121,7 @@ main {
 .layout-choice > span:last-child { display: grid; gap: 2px; }
 .layout-choice strong { font-size: 12px; font-weight: 700; }
 .layout-choice small { color: #717171; font-size: 9px; }
-.layout-icon { position: relative; flex: 0 0 auto; width: 43px; height: 43px; overflow: hidden; border-radius: 10px; background: var(--orange); }
+.layout-icon { position: relative; flex: 0 0 auto; width: 43px; height: 43px; overflow: hidden; border-radius: 10px; background: #fff; }
 .layout-icon i, .layout-icon b { position: absolute; display: block; background: var(--acid); }
 .layout-icon.flow i { inset: -5px 20px -5px -10px; border-radius: 50%; }
 .layout-icon.split i { inset: 0 50% 0 0; }
