@@ -385,8 +385,8 @@ export default function Home() {
 
   useEffect(() => {
     const image = new Image();
-    image.onload = () => setLogoOne({ image, name: "Garna", url: "/garna-mark.png" });
-    image.src = "/garna-mark.png";
+    image.onload = () => setLogoOne({ image, name: "Garna", url: "garna-mark.png" });
+    image.src = "garna-mark.png";
   }, []);
 
   useEffect(() => {
@@ -471,7 +471,7 @@ export default function Home() {
     <main className="tool-page">
       <header className="site-header">
         <div className="brand" aria-label="Garna Client Avatar Maker">
-          <span className="brand-mark"><img src="/garna-logo.png" alt="" /></span>
+          <span className="brand-mark"><img src="garna-logo.png" alt="" /></span>
           <span>garna / client avatar maker</span>
         </div>
         <span className="privacy-pill"><i /> Ваши файлы никуда не загружаются</span>
@@ -487,7 +487,7 @@ export default function Home() {
           <div className="uploads">
             <div className="upload-card fixed-logo-card" aria-label="Логотип Garna установлен по умолчанию">
               <span className="upload-number">01</span>
-              <span className="upload-preview"><img src="/garna-logo.png" alt="" /></span>
+              <span className="upload-preview"><img src="garna-logo.png" alt="" /></span>
               <span className="upload-copy"><strong>Garna</strong><small>Фирменный логотип</small></span>
               <span className="upload-action locked-action">Зафиксирован</span>
             </div>
