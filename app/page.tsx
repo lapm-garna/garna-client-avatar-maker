@@ -20,9 +20,9 @@ const FRAME_RADIUS = SIZE / 2 - 8;
 
 const layouts: Array<{ id: LayoutMode; title: string }> = [
   { id: "flow", title: "Поток" },
+  { id: "wave", title: "Волнистая диагональ" },
   { id: "split", title: "Сплит" },
   { id: "diagonal", title: "Диагональ" },
-  { id: "wave", title: "Волнистая диагональ" },
 ];
 
 function getLogoCenters(mode: LayoutMode, offsetOne: Point = { x: 0, y: 0 }, offsetTwo: Point = { x: 0, y: 0 }) {
