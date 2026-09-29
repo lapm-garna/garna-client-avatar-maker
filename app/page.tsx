@@ -15,6 +15,8 @@ type Point = { x: number; y: number };
 type LogoKey = "one" | "two";
 
 const SIZE = 1024;
+const CROP_RADIUS = SIZE / 2 + 4;
+const FRAME_RADIUS = SIZE / 2 - 8;
 
 const layouts: Array<{ id: LayoutMode; title: string }> = [
   { id: "flow", title: "Поток" },
@@ -259,7 +261,9 @@ function drawCanvas(
   ctx.clearRect(0, 0, SIZE, SIZE);
   ctx.save();
   ctx.beginPath();
-  ctx.arc(SIZE / 2, SIZE / 2, 476, 0, Math.PI * 2);
+  // Slightly overscan the circular artwork so Telegram's own round mask
+  // never reveals a transparent (white) halo at the outer edge.
+  ctx.arc(SIZE / 2, SIZE / 2, CROP_RADIUS, 0, Math.PI * 2);
   ctx.clip();
 
   const centers = getLogoCenters(mode, offsetOne, offsetTwo);
@@ -320,7 +324,7 @@ function drawCanvas(
 
   if (border) {
     ctx.beginPath();
-    ctx.arc(SIZE / 2, SIZE / 2, 476, 0, Math.PI * 2);
+    ctx.arc(SIZE / 2, SIZE / 2, FRAME_RADIUS, 0, Math.PI * 2);
     ctx.strokeStyle = "rgba(255,255,255,.88)";
     ctx.lineWidth = 14;
     ctx.stroke();
