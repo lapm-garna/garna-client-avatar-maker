@@ -161,7 +161,8 @@ main {
 .preview-topline span { display: flex; align-items: center; gap: 8px; color: #a6a6a6; }
 .preview-stage { position: relative; flex: 1; min-height: 560px; display: grid; place-items: center; isolation: isolate; overflow: hidden; margin: 21px 0 19px; border: 1px solid rgba(255,255,255,.08); border-radius: 20px; background: radial-gradient(circle at center, #242424, #121212 70%); }
 .preview-stage::before { content: ""; position: absolute; inset: 0; opacity: .13; background-image: linear-gradient(rgba(255,255,255,.13) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.13) 1px, transparent 1px); background-size: 42px 42px; mask-image: radial-gradient(circle, #000 30%, transparent 78%); }
-.preview-stage canvas { position: relative; z-index: 2; display: block; width: min(88%, 560px); height: auto; filter: drop-shadow(0 30px 42px rgba(0,0,0,.46)); }
+.preview-stage canvas { position: relative; z-index: 2; display: block; width: min(88%, 560px); height: auto; touch-action: none; user-select: none; cursor: grab; filter: drop-shadow(0 30px 42px rgba(0,0,0,.46)); }
+.preview-stage canvas.is-dragging { cursor: grabbing; }
 .glow { position: absolute; z-index: 0; width: 230px; height: 230px; border-radius: 50%; filter: blur(75px); opacity: .18; }
 .glow-one { left: 5%; top: 10%; background: var(--acid); }
 .glow-two { right: 4%; bottom: 10%; background: var(--orange); }

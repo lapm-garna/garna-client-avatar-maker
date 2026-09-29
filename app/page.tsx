@@ -1,9 +1,18 @@
 "use client";
 
-import { ChangeEvent, DragEvent, useEffect, useRef, useState } from "react";
+import {
+  ChangeEvent,
+  DragEvent,
+  PointerEvent as ReactPointerEvent,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 type LayoutMode = "flow" | "split" | "diagonal";
 type LogoAsset = { image: HTMLImageElement; name: string; url: string };
+type Point = { x: number; y: number };
+type LogoKey = "one" | "two";
 
 const SIZE = 1024;
 
@@ -12,6 +21,17 @@ const layouts: Array<{ id: LayoutMode; title: string }> = [
   { id: "split", title: "Сплит" },
   { id: "diagonal", title: "Диагональ" },
 ];
+
+function getLogoCenters(mode: LayoutMode, offsetOne: Point = { x: 0, y: 0 }, offsetTwo: Point = { x: 0, y: 0 }) {
+  const base = mode === "diagonal"
+    ? { one: { x: 315, y: 425 }, two: { x: 710, y: 600 } }
+    : { one: { x: 333, y: 512 }, two: { x: 704, y: 512 } };
+
+  return {
+    one: { x: base.one.x + offsetOne.x, y: base.one.y + offsetOne.y },
+    two: { x: base.two.x + offsetTwo.x, y: base.two.y + offsetTwo.y },
+  };
+}
 
 function imageFromUrl(url: string) {
   return new Promise<HTMLImageElement>((resolve, reject) => {
@@ -225,6 +245,8 @@ function drawCanvas(
   secondColor: string,
   logoOne: LogoAsset | null,
   logoTwo: LogoAsset | null,
+  offsetOne: Point,
+  offsetTwo: Point,
   scale: number,
   card: boolean,
   border: boolean,
@@ -238,10 +260,7 @@ function drawCanvas(
   ctx.arc(SIZE / 2, SIZE / 2, 476, 0, Math.PI * 2);
   ctx.clip();
 
-  let oneX = 333;
-  let twoX = 704;
-  let oneY = 512;
-  let twoY = 512;
+  const centers = getLogoCenters(mode, offsetOne, offsetTwo);
 
   if (mode === "flow") {
     ctx.fillStyle = secondColor;
@@ -275,15 +294,11 @@ function drawCanvas(
     ctx.closePath();
     ctx.fillStyle = firstColor;
     ctx.fill();
-    oneX = 315;
-    oneY = 425;
-    twoX = 710;
-    twoY = 600;
   }
 
   const box = (scale / 100) * 520;
-  drawContained(ctx, logoOne, oneX, oneY, box, "01", card);
-  drawContained(ctx, logoTwo, twoX, twoY, box, "02", card);
+  drawContained(ctx, logoOne, centers.one.x, centers.one.y, box, "01", card);
+  drawContained(ctx, logoTwo, centers.two.x, centers.two.y, box, "02", card);
   ctx.restore();
 
   if (border) {
@@ -349,6 +364,11 @@ function UploadCard({
 
 export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const dragRef = useRef<{
+    logo: LogoKey;
+    pointerId: number;
+    grabOffset: Point;
+  } | null>(null);
   const [logoOne, setLogoOne] = useState<LogoAsset | null>(null);
   const [logoTwoOriginal, setLogoTwoOriginal] = useState<LogoAsset | null>(null);
   const [logoTwoClean, setLogoTwoClean] = useState<LogoAsset | null>(null);
@@ -360,6 +380,9 @@ export default function Home() {
   const [scale, setScale] = useState(58);
   const [card, setCard] = useState(false);
   const [border, setBorder] = useState(true);
+  const [offsetOne, setOffsetOne] = useState<Point>({ x: 0, y: 0 });
+  const [offsetTwo, setOffsetTwo] = useState<Point>({ x: 0, y: 0 });
+  const [draggingLogo, setDraggingLogo] = useState<LogoKey | null>(null);
   const [error, setError] = useState("");
   const logoTwo = autoRemove ? logoTwoClean ?? logoTwoOriginal : logoTwoOriginal;
 
@@ -378,14 +401,93 @@ export default function Home() {
       secondColor,
       logoOne,
       logoTwo,
+      offsetOne,
+      offsetTwo,
       scale,
       card,
       border,
     );
-  }, [mode, firstColor, secondColor, logoOne, logoTwo, scale, card, border]);
+  }, [mode, firstColor, secondColor, logoOne, logoTwo, offsetOne, offsetTwo, scale, card, border]);
+
+  const canvasPoint = (event: ReactPointerEvent<HTMLCanvasElement>) => {
+    const bounds = event.currentTarget.getBoundingClientRect();
+    return {
+      x: ((event.clientX - bounds.left) / bounds.width) * SIZE,
+      y: ((event.clientY - bounds.top) / bounds.height) * SIZE,
+    };
+  };
+
+  const startLogoDrag = (event: ReactPointerEvent<HTMLCanvasElement>) => {
+    const point = canvasPoint(event);
+    const centers = getLogoCenters(mode, offsetOne, offsetTwo);
+    const hitRadius = Math.max(105, ((scale / 100) * 520) / 2);
+    const distanceOne = Math.hypot(point.x - centers.one.x, point.y - centers.one.y);
+    const distanceTwo = Math.hypot(point.x - centers.two.x, point.y - centers.two.y);
+    const logo: LogoKey = distanceOne <= distanceTwo ? "one" : "two";
+    const center = centers[logo];
+    const distance = Math.min(distanceOne, distanceTwo);
+
+    if (distance > hitRadius) return;
+
+    event.preventDefault();
+    event.currentTarget.setPointerCapture(event.pointerId);
+    dragRef.current = {
+      logo,
+      pointerId: event.pointerId,
+      grabOffset: { x: point.x - center.x, y: point.y - center.y },
+    };
+    setDraggingLogo(logo);
+  };
+
+  const moveLogo = (event: ReactPointerEvent<HTMLCanvasElement>) => {
+    const drag = dragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+
+    event.preventDefault();
+    const point = canvasPoint(event);
+    let nextCenter = {
+      x: point.x - drag.grabOffset.x,
+      y: point.y - drag.grabOffset.y,
+    };
+    const centerDistance = Math.hypot(nextCenter.x - SIZE / 2, nextCenter.y - SIZE / 2);
+    const maxDistance = Math.max(40, 476 - ((scale / 100) * 520) / 2);
+
+    if (centerDistance > maxDistance) {
+      const ratio = maxDistance / centerDistance;
+      nextCenter = {
+        x: SIZE / 2 + (nextCenter.x - SIZE / 2) * ratio,
+        y: SIZE / 2 + (nextCenter.y - SIZE / 2) * ratio,
+      };
+    }
+
+    const baseCenter = getLogoCenters(mode)[drag.logo];
+    const nextOffset = {
+      x: nextCenter.x - baseCenter.x,
+      y: nextCenter.y - baseCenter.y,
+    };
+
+    if (drag.logo === "one") setOffsetOne(nextOffset);
+    else setOffsetTwo(nextOffset);
+  };
+
+  const finishLogoDrag = (event: ReactPointerEvent<HTMLCanvasElement>) => {
+    if (!dragRef.current || dragRef.current.pointerId !== event.pointerId) return;
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+    dragRef.current = null;
+    setDraggingLogo(null);
+  };
+
+  const selectMode = (nextMode: LayoutMode) => {
+    setMode(nextMode);
+    setOffsetOne({ x: 0, y: 0 });
+    setOffsetTwo({ x: 0, y: 0 });
+  };
 
   const loadLogo = (file: File) => {
     setError("");
+    setOffsetTwo({ x: 0, y: 0 });
     if (!file.type.startsWith("image/")) {
       setError("Нужен файл изображения: PNG, JPG или WebP.");
       return;
@@ -435,6 +537,8 @@ export default function Home() {
     setCard(false);
     setBorder(true);
     setAutoRemove(true);
+    setOffsetOne({ x: 0, y: 0 });
+    setOffsetTwo({ x: 0, y: 0 });
     setError("");
   };
 
@@ -482,7 +586,7 @@ export default function Home() {
               <button
                 key={layout.id}
                 className={`layout-choice ${mode === layout.id ? "is-active" : ""}`}
-                onClick={() => setMode(layout.id)}
+                onClick={() => selectMode(layout.id)}
                 type="button"
                 aria-pressed={mode === layout.id}
               >
@@ -516,7 +620,17 @@ export default function Home() {
           <div className="preview-topline"><span><i /> Live preview</span><b>1024 × 1024 px</b></div>
           <div className="preview-stage">
             <div className="glow glow-one" /><div className="glow glow-two" />
-            <canvas ref={canvasRef} width={SIZE} height={SIZE} aria-label="Предпросмотр объединённого логотипа" />
+            <canvas
+              ref={canvasRef}
+              className={draggingLogo ? "is-dragging" : ""}
+              width={SIZE}
+              height={SIZE}
+              aria-label="Предпросмотр объединённого логотипа. Логотипы можно перетаскивать."
+              onPointerDown={startLogoDrag}
+              onPointerMove={moveLogo}
+              onPointerUp={finishLogoDrag}
+              onPointerCancel={finishLogoDrag}
+            />
             <span className="crop-note">Круглый кроп Telegram</span>
           </div>
           <div className="action-row">
