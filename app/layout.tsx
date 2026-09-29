@@ -18,6 +18,10 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase: new URL(baseUrl),
     title: "Garna Logo Mixer — объединить два логотипа онлайн",
     description: "Бесплатный генератор совместных логотипов для Telegram: загрузите два знака, выберите композицию и скачайте PNG 1024×1024.",
+    icons: {
+      icon: [{ url: "/favicon.png", type: "image/png", sizes: "512x512" }],
+      apple: [{ url: "/favicon.png", sizes: "512x512" }],
+    },
     openGraph: {
       title: "Garna Logo Mixer",
       description: "Два логотипа. Одна иконка.",
