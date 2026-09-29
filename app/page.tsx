@@ -9,7 +9,7 @@ import {
   useState,
 } from "react";
 
-type LayoutMode = "flow" | "split" | "diagonal";
+type LayoutMode = "flow" | "split" | "diagonal" | "wave";
 type LogoAsset = { image: HTMLImageElement; name: string; url: string };
 type Point = { x: number; y: number };
 type LogoKey = "one" | "two";
@@ -20,11 +20,12 @@ const layouts: Array<{ id: LayoutMode; title: string }> = [
   { id: "flow", title: "Поток" },
   { id: "split", title: "Сплит" },
   { id: "diagonal", title: "Диагональ" },
+  { id: "wave", title: "Волнистая диагональ" },
 ];
 
 function getLogoCenters(mode: LayoutMode, offsetOne: Point = { x: 0, y: 0 }, offsetTwo: Point = { x: 0, y: 0 }) {
-  const base = mode === "diagonal"
-    ? { one: { x: 315, y: 425 }, two: { x: 710, y: 600 } }
+  const base = mode === "diagonal" || mode === "wave"
+    ? { one: { x: 315, y: 415 }, two: { x: 710, y: 610 } }
     : { one: { x: 333, y: 512 }, two: { x: 704, y: 512 } };
 
   return {
@@ -290,6 +291,21 @@ function drawCanvas(
     ctx.moveTo(0, 0);
     ctx.lineTo(760, 0);
     ctx.lineTo(265, SIZE);
+    ctx.lineTo(0, SIZE);
+    ctx.closePath();
+    ctx.fillStyle = firstColor;
+    ctx.fill();
+  }
+
+  if (mode === "wave") {
+    ctx.fillStyle = secondColor;
+    ctx.fillRect(0, 0, SIZE, SIZE);
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(735, 0);
+    ctx.bezierCurveTo(835, 145, 505, 245, 610, 405);
+    ctx.bezierCurveTo(720, 570, 315, 655, 415, 805);
+    ctx.bezierCurveTo(480, 905, 285, 970, 245, SIZE);
     ctx.lineTo(0, SIZE);
     ctx.closePath();
     ctx.fillStyle = firstColor;
