@@ -303,10 +303,9 @@ function drawCanvas(
     ctx.fillRect(0, 0, SIZE, SIZE);
     ctx.beginPath();
     ctx.moveTo(0, 0);
-    ctx.lineTo(705, 0);
-    ctx.bezierCurveTo(790, 145, 500, 245, 590, 405);
-    ctx.bezierCurveTo(680, 570, 340, 655, 434, 805);
-    ctx.bezierCurveTo(500, 905, 340, 970, 319, SIZE);
+    ctx.lineTo(704, 0);
+    ctx.bezierCurveTo(796, 205, 485, 336, 462, 519);
+    ctx.bezierCurveTo(436, 708, 602, 768, 320, SIZE);
     ctx.lineTo(0, SIZE);
     ctx.closePath();
     ctx.fillStyle = firstColor;
