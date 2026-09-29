@@ -636,11 +636,11 @@ export default function Home() {
           <div className="range-grid">
             <label className="range-control">
               <span><b>Логотип Garna</b><output>{scaleOne}%</output></span>
-              <input aria-label="Размер логотипа Garna" type="range" min="35" max="75" value={scaleOne} onChange={(event) => setScaleOne(Number(event.target.value))} />
+              <input aria-label="Размер логотипа Garna" type="range" min="35" max="100" value={scaleOne} onChange={(event) => setScaleOne(Number(event.target.value))} />
             </label>
             <label className="range-control">
               <span><b>Логотип клиента</b><output>{scaleTwo}%</output></span>
-              <input aria-label="Размер логотипа клиента" type="range" min="35" max="75" value={scaleTwo} onChange={(event) => setScaleTwo(Number(event.target.value))} />
+              <input aria-label="Размер логотипа клиента" type="range" min="35" max="100" value={scaleTwo} onChange={(event) => setScaleTwo(Number(event.target.value))} />
             </label>
           </div>
 
