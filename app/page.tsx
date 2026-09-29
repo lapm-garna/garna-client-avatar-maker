@@ -248,7 +248,8 @@ function drawCanvas(
   logoTwo: LogoAsset | null,
   offsetOne: Point,
   offsetTwo: Point,
-  scale: number,
+  scaleOne: number,
+  scaleTwo: number,
   card: boolean,
   border: boolean,
 ) {
@@ -302,19 +303,20 @@ function drawCanvas(
     ctx.fillRect(0, 0, SIZE, SIZE);
     ctx.beginPath();
     ctx.moveTo(0, 0);
-    ctx.lineTo(735, 0);
-    ctx.bezierCurveTo(835, 145, 505, 245, 610, 405);
-    ctx.bezierCurveTo(720, 570, 315, 655, 415, 805);
-    ctx.bezierCurveTo(480, 905, 285, 970, 245, SIZE);
+    ctx.lineTo(705, 0);
+    ctx.bezierCurveTo(790, 145, 500, 245, 590, 405);
+    ctx.bezierCurveTo(680, 570, 340, 655, 434, 805);
+    ctx.bezierCurveTo(500, 905, 340, 970, 319, SIZE);
     ctx.lineTo(0, SIZE);
     ctx.closePath();
     ctx.fillStyle = firstColor;
     ctx.fill();
   }
 
-  const box = (scale / 100) * 520;
-  drawContained(ctx, logoOne, centers.one.x, centers.one.y, box, "01", card);
-  drawContained(ctx, logoTwo, centers.two.x, centers.two.y, box, "02", card);
+  const boxOne = (scaleOne / 100) * 520;
+  const boxTwo = (scaleTwo / 100) * 520;
+  drawContained(ctx, logoOne, centers.one.x, centers.one.y, boxOne, "01", card);
+  drawContained(ctx, logoTwo, centers.two.x, centers.two.y, boxTwo, "02", card);
   ctx.restore();
 
   if (border) {
@@ -393,7 +395,8 @@ export default function Home() {
   const [mode, setMode] = useState<LayoutMode>("flow");
   const firstColor = "#CBF300";
   const [secondColor, setSecondColor] = useState("#FFFFFF");
-  const [scale, setScale] = useState(58);
+  const [scaleOne, setScaleOne] = useState(52);
+  const [scaleTwo, setScaleTwo] = useState(58);
   const [card, setCard] = useState(false);
   const [border, setBorder] = useState(true);
   const [offsetOne, setOffsetOne] = useState<Point>({ x: 0, y: 0 });
@@ -419,11 +422,12 @@ export default function Home() {
       logoTwo,
       offsetOne,
       offsetTwo,
-      scale,
+      scaleOne,
+      scaleTwo,
       card,
       border,
     );
-  }, [mode, firstColor, secondColor, logoOne, logoTwo, offsetOne, offsetTwo, scale, card, border]);
+  }, [mode, firstColor, secondColor, logoOne, logoTwo, offsetOne, offsetTwo, scaleOne, scaleTwo, card, border]);
 
   const canvasPoint = (event: ReactPointerEvent<HTMLCanvasElement>) => {
     const bounds = event.currentTarget.getBoundingClientRect();
@@ -436,14 +440,19 @@ export default function Home() {
   const startLogoDrag = (event: ReactPointerEvent<HTMLCanvasElement>) => {
     const point = canvasPoint(event);
     const centers = getLogoCenters(mode, offsetOne, offsetTwo);
-    const hitRadius = Math.max(105, ((scale / 100) * 520) / 2);
+    const hitRadiusOne = Math.max(105, ((scaleOne / 100) * 520) / 2);
+    const hitRadiusTwo = Math.max(105, ((scaleTwo / 100) * 520) / 2);
     const distanceOne = Math.hypot(point.x - centers.one.x, point.y - centers.one.y);
     const distanceTwo = Math.hypot(point.x - centers.two.x, point.y - centers.two.y);
-    const logo: LogoKey = distanceOne <= distanceTwo ? "one" : "two";
-    const center = centers[logo];
-    const distance = Math.min(distanceOne, distanceTwo);
+    const hitsOne = distanceOne <= hitRadiusOne;
+    const hitsTwo = distanceTwo <= hitRadiusTwo;
 
-    if (distance > hitRadius) return;
+    if (!hitsOne && !hitsTwo) return;
+
+    const logo: LogoKey = hitsOne && hitsTwo
+      ? distanceOne / hitRadiusOne <= distanceTwo / hitRadiusTwo ? "one" : "two"
+      : hitsOne ? "one" : "two";
+    const center = centers[logo];
 
     event.preventDefault();
     event.currentTarget.setPointerCapture(event.pointerId);
@@ -466,7 +475,8 @@ export default function Home() {
       y: point.y - drag.grabOffset.y,
     };
     const centerDistance = Math.hypot(nextCenter.x - SIZE / 2, nextCenter.y - SIZE / 2);
-    const maxDistance = Math.max(40, 476 - ((scale / 100) * 520) / 2);
+    const draggedScale = drag.logo === "one" ? scaleOne : scaleTwo;
+    const maxDistance = Math.max(40, 476 - ((draggedScale / 100) * 520) / 2);
 
     if (centerDistance > maxDistance) {
       const ratio = maxDistance / centerDistance;
@@ -549,7 +559,8 @@ export default function Home() {
     setLogoTwoClean(null);
     setMode("flow");
     setSecondColor("#FFFFFF");
-    setScale(58);
+    setScaleOne(52);
+    setScaleTwo(58);
     setCard(false);
     setBorder(true);
     setAutoRemove(true);
@@ -620,10 +631,16 @@ export default function Home() {
             <label><span>Цвет клиента</span><input type="color" value={secondColor} onChange={(event) => setSecondColor(event.target.value)} /><code>{secondColor.toUpperCase()}</code></label>
           </div>
 
-          <label className="range-control">
-            <span><b>Размер логотипов</b><output>{scale}%</output></span>
-            <input type="range" min="40" max="72" value={scale} onChange={(event) => setScale(Number(event.target.value))} />
-          </label>
+          <div className="range-grid">
+            <label className="range-control">
+              <span><b>Логотип Garna</b><output>{scaleOne}%</output></span>
+              <input aria-label="Размер логотипа Garna" type="range" min="35" max="75" value={scaleOne} onChange={(event) => setScaleOne(Number(event.target.value))} />
+            </label>
+            <label className="range-control">
+              <span><b>Логотип клиента</b><output>{scaleTwo}%</output></span>
+              <input aria-label="Размер логотипа клиента" type="range" min="35" max="75" value={scaleTwo} onChange={(event) => setScaleTwo(Number(event.target.value))} />
+            </label>
+          </div>
 
           <div className="toggle-row">
             <label><span><b>Удалять фон</b><small>Автоматически по краям</small></span><input type="checkbox" checked={autoRemove} onChange={(event) => setAutoRemove(event.target.checked)} /><i /></label>

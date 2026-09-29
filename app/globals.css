@@ -136,7 +136,8 @@ main {
 .palette-row { display: flex; gap: 8px; margin: 11px 0 25px; }
 .palette-row button { width: 27px; height: 27px; border: 2px solid #101010; outline: 1px solid rgba(255,255,255,.2); border-radius: 50%; cursor: pointer; transition: .2s; }
 .palette-row button:hover { transform: scale(1.15); }
-.range-control { display: block; }
+.range-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.range-control { display: block; min-width: 0; }
 .range-control > span { display: flex; justify-content: space-between; margin-bottom: 13px; }
 .range-control b { font-size: 12px; }
 .range-control output { color: var(--acid); font-family: monospace; font-size: 11px; }
@@ -204,7 +205,7 @@ footer b { text-align: right; color: var(--acid); font-weight: 600; }
   .studio { margin: 0 10px; border-radius: 18px; }
   .studio.tool-only { margin: 22px 10px 34px; }
   .controls { padding: 29px 18px 33px; }
-  .uploads, .layout-grid, .color-row, .toggle-row { grid-template-columns: 1fr; }
+  .uploads, .layout-grid, .color-row, .range-grid, .toggle-row { grid-template-columns: 1fr; }
   .panel-heading { align-items: flex-start; }
   .preview-panel { min-height: auto; padding: 20px 15px 23px; }
   .preview-stage { min-height: 360px; margin-top: 16px; }
