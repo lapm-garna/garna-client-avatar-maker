@@ -93,7 +93,6 @@ main {
 .controls { padding: 42px 44px 46px; background: rgba(13,13,13,.72); }
 .panel-heading, .section-title { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; }
 .panel-heading h2, .section-title h2 { margin: 5px 0 0; font-size: 22px; letter-spacing: -.04em; font-weight: 600; }
-.file-note { color: #767676; font-size: 10px; line-height: 1.4; text-align: right; text-transform: uppercase; letter-spacing: .04em; }
 .uploads { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 22px; }
 .upload-card { position: relative; min-width: 0; min-height: 112px; display: grid; grid-template-columns: 48px minmax(0,1fr); grid-template-rows: 1fr 1fr; column-gap: 13px; padding: 18px; border: 1px dashed rgba(255,255,255,.18); border-radius: 16px; cursor: pointer; transition: .2s ease; }
 .upload-card:hover, .upload-card.is-dragging { border-color: var(--acid); background: rgba(203,243,0,.045); transform: translateY(-2px); }
@@ -120,7 +119,6 @@ main {
 .layout-choice.is-active { border-color: var(--acid); box-shadow: inset 0 0 0 1px var(--acid); background: rgba(203,243,0,.06); }
 .layout-choice > span:last-child { display: grid; gap: 2px; }
 .layout-choice strong { font-size: 12px; font-weight: 700; }
-.layout-choice small { color: #717171; font-size: 9px; }
 .layout-icon { position: relative; flex: 0 0 auto; width: 43px; height: 43px; overflow: hidden; border-radius: 10px; background: #fff; }
 .layout-icon i, .layout-icon b { position: absolute; display: block; background: var(--acid); }
 .layout-icon.flow i { inset: -5px 20px -5px -10px; border-radius: 50%; }
@@ -205,7 +203,6 @@ footer b { text-align: right; color: var(--acid); font-weight: 600; }
   .controls { padding: 29px 18px 33px; }
   .uploads, .layout-grid, .color-row, .toggle-row { grid-template-columns: 1fr; }
   .panel-heading { align-items: flex-start; }
-  .file-note { display: none; }
   .preview-panel { min-height: auto; padding: 20px 15px 23px; }
   .preview-stage { min-height: 360px; margin-top: 16px; }
   .preview-stage canvas { width: 92%; }

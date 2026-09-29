@@ -7,10 +7,10 @@ type LogoAsset = { image: HTMLImageElement; name: string; url: string };
 
 const SIZE = 1024;
 
-const layouts: Array<{ id: LayoutMode; title: string; caption: string }> = [
-  { id: "flow", title: "Поток", caption: "Мягкое соединение" },
-  { id: "split", title: "Сплит", caption: "Чётко 50 / 50" },
-  { id: "diagonal", title: "Диагональ", caption: "Больше динамики" },
+const layouts: Array<{ id: LayoutMode; title: string }> = [
+  { id: "flow", title: "Поток" },
+  { id: "split", title: "Сплит" },
+  { id: "diagonal", title: "Диагональ" },
 ];
 
 function imageFromUrl(url: string) {
@@ -461,7 +461,6 @@ export default function Home() {
         <div className="controls">
           <div className="panel-heading">
             <div><span className="step-kicker">Шаг 01</span><h2>Добавьте логотип клиента</h2></div>
-            <span className="file-note">Фон удалится<br />автоматически</span>
           </div>
 
           <div className="uploads">
@@ -488,7 +487,7 @@ export default function Home() {
                 aria-pressed={mode === layout.id}
               >
                 <span className={`layout-icon ${layout.id}`}><i /><b /></span>
-                <span><strong>{layout.title}</strong><small>{layout.caption}</small></span>
+                <span><strong>{layout.title}</strong></span>
               </button>
             ))}
           </div>
